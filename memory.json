@@ -1,0 +1,40 @@
+{
+  "profile": {
+    "name": "Friend",
+    "skills": [
+      "Python",
+      "Flask",
+      "JavaScript"
+    ],
+    "interests": [
+      "AI",
+      "personal growth",
+      "portfolio projects"
+    ],
+    "projects": [
+      "BuddyAI"
+    ],
+    "goals": [
+      "Build consistent habits",
+      "Improve coding confidence"
+    ],
+    "favorite_technologies": [
+      "Python",
+      "Flask",
+      "SQLite",
+      "JavaScript"
+    ],
+    "daily_mood_logs": []
+  },
+  "pinned_messages": [],
+  "badges": [
+    "First Chat",
+    "Goal Starter"
+  ],
+  "settings": {
+    "theme": "dark",
+    "voiceReplies": false,
+    "displayName": "Friend",
+    "focusArea": "Career growth"
+  }
+}

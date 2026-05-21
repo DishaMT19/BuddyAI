@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BuddyAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div id="loading" class="loading-screen">
+    <div class="buddy-orbit">
+      <span></span><span></span><span></span>
+    </div>
+    <h1>BuddyAI</h1>
+    <p>Preparing your calm, clever companion...</p>
+  </div>
+
+  <main class="app-shell">
+    <aside class="sidebar glass">
+      <div class="brand">
+        <div class="logo">B</div>
+        <div>
+          <h1>BuddyAI</h1>
+          <p>Friend • Mentor • Coach</p>
+        </div>
+      </div>
+      <button id="newChat" class="primary-btn">+ New Chat</button>
+      <label class="search-box">
+        <span>⌕</span>
+        <input id="searchChats" type="search" placeholder="Search conversations">
+      </label>
+      <div id="chatHistory" class="chat-history"></div>
+      <section class="profile-card">
+        <div class="avatar bot-avatar">AI</div>
+        <div>
+          <strong id="profileName">Friend</strong>
+          <p id="profileFocus">Career growth</p>
+        </div>
+      </section>
+    </aside>
+
+    <section class="chat-panel glass">
+      <header class="chat-header">
+        <button id="menuToggle" class="icon-btn">☰</button>
+        <div>
+          <h2 id="activeTitle">Welcome to BuddyAI</h2>
+          <p><span class="online-dot"></span> Caring companion online</p>
+        </div>
+        <div class="header-actions">
+          <button id="themeToggle" class="icon-btn" title="Toggle theme">☾</button>
+          <button id="voiceToggle" class="icon-btn" title="Voice replies">🔊</button>
+        </div>
+      </header>
+
+      <div id="messages" class="messages"></div>
+
+      <div id="typing" class="typing hidden">
+        <span></span><span></span><span></span>
+        BuddyAI is thinking with you
+      </div>
+
+      <form id="chatForm" class="composer">
+        <div id="attachmentPreview" class="attachment-preview hidden"></div>
+        <div class="tool-row">
+          <button type="button" id="emojiBtn" class="icon-btn" title="Emoji picker">☺</button>
+          <label class="icon-btn attach-btn" title="Attach file">
+            ⎋ <input id="fileInput" type="file" hidden>
+          </label>
+          <button type="button" id="gifBtn" class="icon-btn" title="Add GIF">GIF</button>
+          <button type="button" id="voiceInput" class="icon-btn" title="Voice input">🎙</button>
+        </div>
+        <textarea id="messageInput" rows="1" placeholder="Talk to BuddyAI about your day, goals, ideas, or doubts..."></textarea>
+        <button class="send-btn" type="submit">Send</button>
+        <div id="emojiPicker" class="emoji-picker hidden"></div>
+      </form>
+    </section>
+
+    <aside class="growth-panel">
+      <section class="widget glass">
+        <div class="section-title">
+          <h3>Today</h3>
+          <span id="productivityScore">0%</span>
+        </div>
+        <p id="dailyQuote" class="quote"></p>
+        <div class="mood-row" id="moodRow">
+          <button>😊</button><button>😌</button><button>😐</button><button>😔</button><button>🔥</button>
+        </div>
+      </section>
+
+      <section class="widget glass">
+        <div class="section-title">
+          <h3>Goals</h3>
+          <button id="addGoal" class="mini-btn">Add</button>
+        </div>
+        <div id="goalList" class="stack"></div>
+      </section>
+
+      <section class="widget glass">
+        <div class="section-title">
+          <h3>Habits</h3>
+          <button id="addHabit" class="mini-btn">Add</button>
+        </div>
+        <div id="habitList" class="stack"></div>
+      </section>
+
+      <section class="widget glass utility-grid">
+        <button data-utility="resume">Resume Helper</button>
+        <button data-utility="portfolio">Portfolio Ideas</button>
+        <button data-utility="coding">Coding Help</button>
+        <button data-utility="study">Study Planner</button>
+        <button data-utility="interview">Interview Prep</button>
+        <button data-utility="career">Career Guide</button>
+      </section>
+
+      <section class="widget glass">
+        <h3>Daily Boost</h3>
+        <p id="challengeText"></p>
+        <p id="aptitudeText"></p>
+        <button id="projectIdeaBtn" class="primary-btn compact">Generate Project Idea</button>
+      </section>
+
+      <section class="widget glass">
+        <h3>Growth Summary</h3>
+        <p id="weeklySummary"></p>
+        <div id="badges" class="badges"></div>
+      </section>
+
+      <section class="widget glass settings">
+        <h3>Profile Settings</h3>
+        <input id="displayName" placeholder="Your name">
+        <input id="focusArea" placeholder="Focus area">
+        <button id="saveSettings" class="primary-btn compact">Save Profile</button>
+      </section>
+    </aside>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
