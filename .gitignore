@@ -1,4 +1,5 @@
 __pycache__/ 
+.deploy_tmp/
 venv/ 
 .env 
 *.db 

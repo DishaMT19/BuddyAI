@@ -11,14 +11,33 @@ const state = {
   voiceReplies: false
 };
 
+// Determine API base URL - use current origin in production, localhost for development
+const getApiUrl = () => {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000';
+  }
+  return window.location.origin;
+};
+
+const API_BASE = getApiUrl();
+
 const $ = (selector) => document.querySelector(selector);
-const api = (url, options = {}) => fetch(url, {
-  headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-  ...options
-}).then((res) => {
-  if (!res.ok) throw new Error("Request failed");
-  return res.json();
-});
+const api = (url, options = {}) => {
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE}${url}`;
+  return fetch(fullUrl, {
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options
+  }).then((res) => {
+    if (!res.ok) {
+      console.error(`API Error: ${res.status} ${res.statusText}`);
+      throw new Error(`Request failed: ${res.status}`);
+    }
+    return res.json();
+  }).catch((error) => {
+    console.error('Fetch error:', error);
+    throw error;
+  });
+};
 
 function formatTime(value) {
   return new Date(value).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });

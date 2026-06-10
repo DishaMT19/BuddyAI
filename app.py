@@ -1,17 +1,29 @@
 import json
 import os
+import shutil
 import sqlite3
 from datetime import datetime, timedelta
 
 from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
 
 from chatbot import daily_content, generate_reply, load_memory, save_memory
 
 
-BASE_DIR = os.path.dirname(__file__)
-DB_PATH = os.path.join(BASE_DIR, "database.db")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+DATA_DIR = os.environ.get("BUDDYAI_DATA_DIR") or ("/tmp" if IS_SERVERLESS else BASE_DIR)
+os.makedirs(DATA_DIR, exist_ok=True)
+DB_PATH = os.path.join(DATA_DIR, "database.db")
+SEED_DB_PATH = os.path.join(BASE_DIR, "database.db")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+if IS_SERVERLESS and not os.path.exists(DB_PATH) and os.path.exists(SEED_DB_PATH):
+    shutil.copyfile(SEED_DB_PATH, DB_PATH)
 
 
 def db():
@@ -112,6 +124,22 @@ def row_to_message(row):
         "pinned": bool(row["pinned"]),
         "attachment": row["attachment"],
     }
+
+
+# Health check endpoint
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok", "message": "BuddyAI backend is running"}), 200
+
+
+@app.route("/api/health", methods=["GET"])
+def api_health():
+    try:
+        with db() as connection:
+            connection.execute("SELECT 1").fetchone()
+        return jsonify({"status": "ok", "database": "connected"}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/")
@@ -347,6 +375,9 @@ def future_ai_support():
     })
 
 
+# Initialize database on app startup (works for both local and Vercel)
+init_db()
+
 if __name__ == "__main__":
-    init_db()
+    # For local development only
     app.run(debug=True, host="127.0.0.1", port=5000)

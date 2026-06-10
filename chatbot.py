@@ -2,10 +2,19 @@ import json
 import os
 import random
 import re
+import shutil
 from datetime import datetime
 
 
-MEMORY_FILE = os.path.join(os.path.dirname(__file__), "memory.json")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+DATA_DIR = os.environ.get("BUDDYAI_DATA_DIR") or ("/tmp" if IS_SERVERLESS else BASE_DIR)
+os.makedirs(DATA_DIR, exist_ok=True)
+MEMORY_FILE = os.path.join(DATA_DIR, "memory.json")
+SEED_MEMORY_FILE = os.path.join(BASE_DIR, "memory.json")
+
+if IS_SERVERLESS and not os.path.exists(MEMORY_FILE) and os.path.exists(SEED_MEMORY_FILE):
+    shutil.copyfile(SEED_MEMORY_FILE, MEMORY_FILE)
 
 
 QUOTES = [
