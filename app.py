@@ -380,4 +380,6 @@ init_db()
 
 if __name__ == "__main__":
     # For local development only
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    debug_mode = os.environ.get("FLASK_ENV") != "production"
+    host = "0.0.0.0" if IS_SERVERLESS else "127.0.0.1"
+    app.run(debug=debug_mode, host=host, port=5000)
