@@ -149,37 +149,43 @@ def index():
 
 @app.get("/api/bootstrap")
 def bootstrap():
-    with db() as connection:
-        conversations = [
-            dict(row)
-            for row in connection.execute(
-                "SELECT * FROM conversations ORDER BY updated_at DESC"
-            ).fetchall()
-        ]
-        first_id = conversations[0]["id"] if conversations else None
-        messages = []
-        if first_id:
-            messages = [
-                row_to_message(row)
+    try:
+        with db() as connection:
+            conversations = [
+                dict(row)
                 for row in connection.execute(
-                    "SELECT * FROM messages WHERE conversation_id = ? ORDER BY id ASC",
-                    (first_id,),
+                    "SELECT * FROM conversations ORDER BY updated_at DESC"
                 ).fetchall()
             ]
-        goals = [dict(row) for row in connection.execute("SELECT * FROM goals ORDER BY id DESC").fetchall()]
-        habits = [dict(row) for row in connection.execute("SELECT * FROM habits ORDER BY id DESC").fetchall()]
+            first_id = conversations[0]["id"] if conversations else None
+            messages = []
+            if first_id:
+                messages = [
+                    row_to_message(row)
+                    for row in connection.execute(
+                        "SELECT * FROM messages WHERE conversation_id = ? ORDER BY id ASC",
+                        (first_id,),
+                    ).fetchall()
+                ]
+            goals = [dict(row) for row in connection.execute("SELECT * FROM goals ORDER BY id DESC").fetchall()]
+            habits = [dict(row) for row in connection.execute("SELECT * FROM habits ORDER BY id DESC").fetchall()]
 
-    memory = load_memory()
-    return jsonify({
-        "conversations": conversations,
-        "activeConversationId": first_id,
-        "messages": messages,
-        "memory": memory,
-        "daily": daily_content(),
-        "goals": goals,
-        "habits": habits,
-        "dashboard": dashboard_stats(goals, habits, memory)
-    })
+        memory = load_memory()
+        return jsonify({
+            "conversations": conversations,
+            "activeConversationId": first_id,
+            "messages": messages,
+            "memory": memory,
+            "daily": daily_content(),
+            "goals": goals,
+            "habits": habits,
+            "dashboard": dashboard_stats(goals, habits, memory)
+        })
+    except Exception as e:
+        import traceback
+        print(f"Bootstrap error: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({"error": "Failed to load app data", "details": str(e)}), 500
 
 
 def dashboard_stats(goals, habits, memory):
@@ -376,7 +382,13 @@ def future_ai_support():
 
 
 # Initialize database on app startup (works for both local and Vercel)
-init_db()
+try:
+    init_db()
+    print(f"✓ Database initialized successfully at {DB_PATH}")
+except Exception as e:
+    print(f"✗ Database initialization error: {str(e)}")
+    import traceback
+    traceback.print_exc()
 
 if __name__ == "__main__":
     # For local development only

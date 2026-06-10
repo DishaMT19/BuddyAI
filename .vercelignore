@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+.git
+.gitignore
+.env.local
+.env.*.local
+.deploy_tmp
+.DS_Store

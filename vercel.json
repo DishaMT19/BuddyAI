@@ -2,24 +2,31 @@
   "version": 2,
   "builds": [
     {
-      "src": "app.py",
+      "src": "api/index.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "app.py"
+      "dest": "api/index.py"
     }
   ],
   "env": {
     "FLASK_ENV": "production",
-    "PYTHONUNBUFFERED": "1"
+    "PYTHONUNBUFFERED": "1",
+    "PYTHONHASHSEED": "0"
   },
   "functions": {
-    "app.py": {
+    "api/index.py": {
       "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 60,
+      "includeFiles": "**.py",
+      "excludeFiles": "__pycache__/**"
     }
   }
 }
